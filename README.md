@@ -1,4 +1,4 @@
-forsite-extension-pack
+ForSite Sizzle Pack
 ======================
 
-Collection of WordPress extensions to add sizzle to your themes
+Collection of WordPress extensions to add sizzle to your themes.
