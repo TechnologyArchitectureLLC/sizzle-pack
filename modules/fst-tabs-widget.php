@@ -215,7 +215,7 @@ class FST_Tabs_Widget extends WP_Widget {
 		$instance = wp_parse_args( (array) $instance, $defaults );
 ?>
 		<!-- Widget Title: Text Input -->
-		<p>Foobar.
+		<p>
 				<label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title (optional):', 'fstpack' ); ?></label>
 				<input type="text" name="<?php echo $this->get_field_name( 'title' ); ?>"  value="<?php echo $instance['title']; ?>" class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" />
 		</p>
