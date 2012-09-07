@@ -19,7 +19,7 @@ require_once FST_PACK_DIR . '/modules/slideshow-widget/genesis-responsive-slider
 class FST_Audio_Slideshow_Widget extends WP_Widget {
 
 	/* Properties */
-	var $library_url = "/wp-content/plugins/forsite-extension-pack/widgets/audio-slideshow-widget/";
+	var $library_url = FST_PACK_URL . "widgets/audio-slideshow-widget/";
 	var $version = "0.0.1";
 	/**
 	 * Source of posts to be displayed.  Can be one of many implementations, depending on slider backend in use.

@@ -1,15 +1,15 @@
 <?php
   $modules = array();
   $modules["widgets"][] = array("id"=> "FST_Slideshow_Widget", "name" => "FST Slideshow Widget", 
-                                "thumbnail" => plugins_url( 'forsite-extension-pack/modules/slideshow-widget/images/thumbnail.gif' ),
+                                "thumbnail" => FST_PACK_URL . 'modules/slideshow-widget/images/thumbnail.gif',
                                 "description" => "A slideshow widget based on ImpressJs, and your widget backend of choice",
                                 "tags" => "popular");
   $modules["widgets"][] = array("id"=> "FST_Tabs_Widget", "name" => "FST Tabs Widget", 
-                                "thumbnail" => plugins_url( 'forsite-extension-pack/modules/fst-tabs-widget/images/thumbnail.gif' ),
+                                "thumbnail" => FST_PACK_URL . 'modules/fst-tabs-widget/images/thumbnail.gif',
                                 "description" => "Allows grouping of other widgets into tabs",
                                 "tags" => "");
   $modules["widgets"][] = array("id"=> "FST_Contact_Widget", "name" => "FST Contact Widget", 
-                                "thumbnail" => plugins_url( 'forsite-extension-pack/modules/fst-contact-widget/images/thumbnail.gif' ),
+                                "thumbnail" => FST_PACK_URL . 'modules/fst-contact-widget/images/thumbnail.gif',
                                 "description" => "a Schema.org compliant contact widget",
                                 "tags" => "popular");
   $modules["plugins"][] = array("id"=> "FST_Menu_Extensions", "name" => "FST Menu Extensions", 

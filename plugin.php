@@ -78,15 +78,15 @@ class ForsiteExtensionPackPlugin {
 	 */
 	public function register_admin_styles() {
             wp_enqueue_style( 'bootstrap-wpadmin', 
-                    plugins_url( 'forsite-extension-pack/vendor/bootstrap/css/bootstrap-wpadmin.min.css') );
+                    plugins_url( FST_PACK_URL . 'vendor/bootstrap/css/bootstrap-wpadmin.min.css' );
 	} 
 
 	/**
 	 * Registers and enqueues admin-specific JavaScript.
 	 */	
 	public function register_admin_scripts() {
-            wp_enqueue_script( 'bootstrap', plugins_url( 'forsite-extension-pack/vendor/bootstrap/js/bootstrap.min.js' ) );
-            wp_enqueue_script( 'jquery-quicksand', plugins_url( 'forsite-extension-pack/vendor/jquery.quicksand.js' ) );
+            wp_enqueue_script( 'bootstrap', FST_PACK_URL .  'vendor/bootstrap/js/bootstrap.min.js'  );
+            wp_enqueue_script( 'jquery-quicksand', FST_PACK_URL .  'vendor/jquery.quicksand.js'  );
 	} 
         
         /**
@@ -136,7 +136,7 @@ class ForsiteExtensionPackPlugin {
          */
 	function action_register_custom_menu_page() {
             add_menu_page( 'Forsite', 'Forsite', 'administrator', 'display_forsite_admin_page',
-                    array( &$this, 'display_forsite_admin_page' ), plugins_url( 'forsite-extension-pack/assets/images/icon.png' ), 3 );
+                    array( &$this, 'display_forsite_admin_page' ), FST_PACK_URL . 'assets/images/icon.png', 3 );
 
 	}
 
