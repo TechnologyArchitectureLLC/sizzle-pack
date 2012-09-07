@@ -23,7 +23,6 @@ class FST_Tabs_Widget extends WP_Widget {
 	var $fst_widget_title;
 
 	var $assets_url;
-	var $available_tabs;
 
 	/**
 	 * __construct function.
@@ -43,16 +42,12 @@ class FST_Tabs_Widget extends WP_Widget {
 
 		/* Setup the assets URL in relation to FSTPack. */
 		$this->assets_url = FST_PACK_URL . "/modules/fst-tabs-widget/";
-		
-		$this->available_tabs = array('latest', 'popular', "comments", "tags" );
-		// Allow child themes/plugins to filter here.
-		$this->available_tabs = apply_filters( 'fstpack_available_tabs', $this->available_tabs );
-		
+
 		/* Widget settings. */
 		$widget_ops = array( 'classname' => $this->fst_widget_cssclass, 'description' => $this->fst_widget_description );
 
 		/* Widget control settings. */
-		$control_ops = array( 'width' => 505, 'height' => 350, 'id_base' => $this->fst_widget_idbase );
+		$control_ops = array( 'width' => 250, 'height' => 350, 'id_base' => $this->fst_widget_idbase );
 
 		/* Create the widget. */
 		$this->WP_Widget( $this->fst_widget_idbase, $this->fst_widget_title, $widget_ops, $control_ops );
@@ -77,7 +72,17 @@ class FST_Tabs_Widget extends WP_Widget {
 
 		/* Our variables from the widget settings. */
 		$title = apply_filters('widget_title', $instance['title'], $instance, $this->id_base );
-		$tabs = $instance['tabs'];
+
+		/* Setup tab pieces to be loaded in below. */
+		$tabs = array(
+                                'latest' => __( 'Latest', 'fstpack' ),
+                                'popular' => __( 'Popular', 'fstpack' ),
+                                'comments' => __( 'Comments', 'fstpack' ),
+                                'tags' => __( 'Tags', 'fstpack' )
+                        );
+
+		// Allow child themes/plugins to filter here.
+		$tabs = apply_filters( 'fstpack_tabs_headings', $tabs );
 
 		/* Before widget (defined by themes). */
 		echo $before_widget;
@@ -104,42 +109,44 @@ class FST_Tabs_Widget extends WP_Widget {
 			// Setup the various tabs.
 			$tab_links .= '<ul class="nav nav-tabs">' . "\n";
 			$count = 0;
-			foreach ( $tabs as $tab) {
+			foreach ( $tabs as $k => $v ) {
 				$count++;
 				$class = '';
 
 				if ( $count == 1 ) { $class = ' first active'; }
 				if ( $count == count( $tabs ) ) { $class = ' last'; }
 
-				$tab_links .= '<li class="tab-heading-' . esc_attr( $tab ) . $class . '"><a href="#tab-pane-' . 
-					esc_attr( $tab ) . '" data-toggle="tab">' . __($tab, 'fstpack') . '</a></li>' . "\n";
+				$tab_links .= '<li class="tab-heading-' . esc_attr( $k ) . $class . '"><a href="#tab-pane-' . 
+                                        esc_attr( $k ) . '" data-toggle="tab">' . $v . '</a></li>' . "\n";
 
-				$tab_content .= '<div id="tab-pane-' . esc_attr( $tab ) . '" class="tab-pane tab-pane-' . esc_attr( $tab ) . $class . '">' . "\n";
+				$tab_content .= '<div id="tab-pane-' . esc_attr( $k ) . '" class="tab-pane tab-pane-' . esc_attr( $k ) . $class . '">' . "\n";
 
-				// Tab functions check for functions of the convention "fstpack_tabs_x" or, if non exists,
-				// a method in this class called "tab_content_x". If none, a default method is used to prevent errors.
-				// Parameters: array or arguments: 1: number of posts, 2: dimensions of image
+					// Tab functions check for functions of the convention "fstpack_tabs_x" or, if non exists,
+					// a method in this class called "tab_content_x". If none, a default method is used to prevent errors.
+					// Parameters: array or arguments: 1: number of posts, 2: dimensions of image
 
-				$tab_args = array( 'limit' => intval( $instance['limit'] ), 'image_dimension' => intval( $instance['image_dimension'] ) );
+					$tab_args = array( 'limit' => intval( $instance['limit'] ), 'image_dimension' => intval( $instance['image_dimension'] ) );
 
-				if ( function_exists( 'fstpack_tabs_' . esc_attr( $tab ) ) ) {
-					$tab_content .= call_user_func_array( 'fstpack_tabs_' . esc_attr( $tab ), $tab_args );
-				} else {
-					if ( method_exists( $this, 'tab_content_' . esc_attr( $tab ) ) ) {
-						$tab_content .= call_user_func_array( array( $this, 'tab_content_' . esc_attr( $tab ) ), $tab_args );
+					if ( function_exists( 'fstpack_tabs_' . esc_attr( $k ) ) ) {
+						$tab_content .= call_user_func_array( 'fstpack_tabs_' . esc_attr( $k ), $tab_args );
 					} else {
-						$tab_content .= $this->tab_content_default( $tab );
+						if ( method_exists( $this, 'tab_content_' . esc_attr( $k ) ) ) {
+							$tab_content .= call_user_func_array( array( $this, 'tab_content_' . esc_attr( $k ) ), $tab_args );
+						} else {
+							$tab_content .= $this->tab_content_default( $k );
+						}
 					}
-				}
 
 				$tab_content .= '</div><!--/.tab-pane-->' . "\n";
 			}
 			$tab_links .= '</ul>' . "\n";
 
+
+
 			$html .= '<div class="tabbable tabs-' . esc_attr( $instance['tab_position'] ) . '">' . "\n";
-				if ( $instance['tab_position'] != 'below' ) { $html .= $tab_links; }
-				$html .= '<div class="tab-content image-align-' . $instance['image_alignment'] . '">' . "\n" . $tab_content . '</div><!--/.tab-content-->' . "\n";
-				if ( $instance['tab_position'] == 'below' ) { $html .= $tab_links; }
+                        if ( $instance['tab_position'] != 'below' ) { $html .= $tab_links; }
+                        $html .= '<div class="tab-content image-align-' . $instance['image_alignment'] . '">' . "\n" . $tab_content . '</div><!--/.tab-content-->' . "\n";
+                        if ( $instance['tab_position'] == 'below' ) { $html .= $tab_links; }
 			$html .= '</div><!--/.tabbable-->' . "\n";
 		}
 
@@ -174,15 +181,6 @@ class FST_Tabs_Widget extends WP_Widget {
 		/* Escape the text string and convert to an integer. */
 		$instance['limit'] = intval( strip_tags( $new_instance['limit'] ) );
 		$instance['image_dimension'] = intval( strip_tags( $new_instance['image_dimension'] ) );
-		
-		/* Convert multiple tab_$position fields into tabs array */
-		$instance['tabs'] = array();
-		for ($i = 0; $i < count($this->available_tabs); $i++) {
-			$tab_value = $new_instance["tab_$i"];
-			if ($tab_value != 'none') { 
-				$instance['tabs'][] = $tab_value;
-			}
-		}
 
 		// Allow child themes/plugins to act here.
 		$instance = apply_filters( $this->fst_widget_idbase . '_widget_save', $instance, $new_instance, $this );
@@ -198,100 +196,72 @@ class FST_Tabs_Widget extends WP_Widget {
     * @return void
     */
    function form ( $instance ) {
-		
 		/* Set up some default widget settings. */
 		/* Make sure all keys are added here, even with empty string values. */
 		$defaults = array(
-			'title' => __( 'Tabs', 'fstpack' ),
-			'tabs' => array_slice($this->available_tabs,0,3), /* default to selecting the first 3, to suggest that it is possible to omit having a tab */
-			'tab_position' => 'above',
-			'limit' => 5,
-			'image_dimension' => 45,
-			'image_alignment' => 'left'
-		);
+						'title' => __( 'Tabs', 'fstpack' ),
+						'tab_position' => 'above',
+						'limit' => 5,
+						'image_dimension' => 45,
+						'image_alignment' => 'left'
+					);
 
 		// Allow child themes/plugins to filter here.
 		$defaults = apply_filters( $this->fst_widget_idbase . '_widget_defaults', $defaults, $this );
+
 		$instance = wp_parse_args( (array) $instance, $defaults );
 ?>
 		<!-- Widget Title: Text Input -->
 		<p>
-				<label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title (optional):', 'fstpack' ); ?></label>
-				<input type="text" name="<?php echo $this->get_field_name( 'title' ); ?>"  value="<?php echo $instance['title']; ?>" class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" />
+			<label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title (optional):', 'fstpack' ); ?></label>
+			<input type="text" name="<?php echo $this->get_field_name( 'title' ); ?>"  value="<?php echo $instance['title']; ?>" class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" />
 		</p>
-		<div class="genesis-widget-column">
-			<div class="genesis-widget-column-box genesis-widget-column-box-top">
-				<p><span class="description">Choose up to 4 tabs to display</span></p>
-				<p><?php $this->render_tabs_dropdown($this->available_tabs, $instance['tabs'], 0) ?></p>
-				<p><?php $this->render_tabs_dropdown($this->available_tabs, $instance['tabs'], 1) ?></p>
-				<p><?php $this->render_tabs_dropdown($this->available_tabs, $instance['tabs'], 2) ?></p>
-				<p><?php $this->render_tabs_dropdown($this->available_tabs, $instance['tabs'], 3) ?></p>
-			</div>
-		</div>
-
-		<div class="genesis-widget-column genesis-widget-column-right">
-
-			<div class="genesis-widget-column-box genesis-widget-column-box-top">
-				<!-- Widget Tab Position: Select Input -->
-				<p>
-					<label for="<?php echo $this->get_field_id( 'tab_position' ); ?>"><?php _e( 'Tab Position:', 'fstpack' ); ?></label>
-					<select name="<?php echo $this->get_field_name( 'tab_position' ); ?>" class="widefat" id="<?php echo $this->get_field_id( 'tab_position' ); ?>">
-						<option value="above"<?php selected( $instance['tab_position'], 'above' ); ?>><?php _e( 'Above', 'fstpack' ); ?></option>
-						<option value="below"<?php selected( $instance['tab_position'], 'below' ); ?>><?php _e( 'Below', 'fstpack' ); ?></option>
-						<option value="left"<?php selected( $instance['tab_position'], 'left' ); ?>><?php _e( 'Left', 'fstpack' ); ?></option>
-						<option value="right"<?php selected( $instance['tab_position'], 'right' ); ?>><?php _e( 'Right', 'fstpack' ); ?></option>
-					</select>
-				</p>
-				<!-- Widget Limit: Text Input -->
-				<p>
-					<label for="<?php echo $this->get_field_id( 'limit' ); ?>"><?php _e( 'Limit:', 'fstpack' ); ?></label>
-					<input type="text" name="<?php echo $this->get_field_name( 'limit' ); ?>"  value="<?php echo $instance['limit']; ?>" class="widefat" id="<?php echo $this->get_field_id( 'limit' ); ?>" />
-				</p>
-				<!-- Widget Image Dimension: Text Input -->
-				<p>
-					<label for="<?php echo $this->get_field_id( 'image_dimension' ); ?>"><?php _e( 'Image Dimension:', 'fstpack' ); ?></label>
-					<input type="text" name="<?php echo $this->get_field_name( 'image_dimension' ); ?>"  value="<?php echo $instance['image_dimension']; ?>" class="widefat" id="<?php echo $this->get_field_id( 'image_dimension' ); ?>" />
-				</p>
-				<!-- Widget Image Alignment: Select Input -->
-				<p>
-					<label for="<?php echo $this->get_field_id( 'image_alignment' ); ?>"><?php _e( 'Image Alignment:', 'fstpack' ); ?></label>
-					<select name="<?php echo $this->get_field_name( 'image_alignment' ); ?>" class="widefat" id="<?php echo $this->get_field_id( 'image_alignment' ); ?>">
-						<option value="left"<?php selected( $instance['image_alignment'], 'left' ); ?>><?php _e( 'Left', 'fstpack' ); ?></option>
-						<option value="right"<?php selected( $instance['image_alignment'], 'right' ); ?>><?php _e( 'Right', 'fstpack' ); ?></option>
-					</select>
-				</p>
-				<p><small><?php
-					if ( function_exists( 'fst_image' ) ) {
-									_e( 'fst_image() will be used to display thumbnails.', 'fstpack' );
-					} else {
-									if ( current_theme_supports( 'post-thumbnails' ) ) {
-													_e( 'The "featured image" will be used as thumbnails.', 'fstpack' );
-									} else {
-													_e( 'Post thumbnails are not supported by your theme. Thumbnails will not be displayed.', 'fstpack' );
-									}
-					}
-				?></small></p>
-			</div>
-
-		</div>
+		<!-- Widget Tab Position: Select Input -->
+		<p>
+			<label for="<?php echo $this->get_field_id( 'tab_position' ); ?>"><?php _e( 'Tab Position:', 'fstpack' ); ?></label>
+			<select name="<?php echo $this->get_field_name( 'tab_position' ); ?>" class="widefat" id="<?php echo $this->get_field_id( 'tab_position' ); ?>">
+				<option value="above"<?php selected( $instance['tab_position'], 'above' ); ?>><?php _e( 'Above', 'fstpack' ); ?></option>
+				<option value="below"<?php selected( $instance['tab_position'], 'below' ); ?>><?php _e( 'Below', 'fstpack' ); ?></option>
+				<option value="left"<?php selected( $instance['tab_position'], 'left' ); ?>><?php _e( 'Left', 'fstpack' ); ?></option>
+				<option value="right"<?php selected( $instance['tab_position'], 'right' ); ?>><?php _e( 'Right', 'fstpack' ); ?></option>
+			</select>
+		</p>
+		<!-- Widget Limit: Text Input -->
+		<p>
+			<label for="<?php echo $this->get_field_id( 'limit' ); ?>"><?php _e( 'Limit:', 'fstpack' ); ?></label>
+			<input type="text" name="<?php echo $this->get_field_name( 'limit' ); ?>"  value="<?php echo $instance['limit']; ?>" class="widefat" id="<?php echo $this->get_field_id( 'limit' ); ?>" />
+		</p>
+		<!-- Widget Image Dimension: Text Input -->
+		<p>
+			<label for="<?php echo $this->get_field_id( 'image_dimension' ); ?>"><?php _e( 'Image Dimension:', 'fstpack' ); ?></label>
+			<input type="text" name="<?php echo $this->get_field_name( 'image_dimension' ); ?>"  value="<?php echo $instance['image_dimension']; ?>" class="widefat" id="<?php echo $this->get_field_id( 'image_dimension' ); ?>" />
+		</p>
+		<!-- Widget Image Alignment: Select Input -->
+		<p>
+			<label for="<?php echo $this->get_field_id( 'image_alignment' ); ?>"><?php _e( 'Image Alignment:', 'fstpack' ); ?></label>
+			<select name="<?php echo $this->get_field_name( 'image_alignment' ); ?>" class="widefat" id="<?php echo $this->get_field_id( 'image_alignment' ); ?>">
+				<option value="left"<?php selected( $instance['image_alignment'], 'left' ); ?>><?php _e( 'Left', 'fstpack' ); ?></option>
+				<option value="right"<?php selected( $instance['image_alignment'], 'right' ); ?>><?php _e( 'Right', 'fstpack' ); ?></option>
+			</select>
+		</p>
+		<p><small><?php
+			if ( function_exists( 'fst_image' ) ) {
+				_e( 'fst_image() will be used to display thumbnails.', 'fstpack' );
+			} else {
+				if ( current_theme_supports( 'post-thumbnails' ) ) {
+					_e( 'The "featured image" will be used as thumbnails.', 'fstpack' );
+				} else {
+					_e( 'Post thumbnails are not supported by your theme. Thumbnails will not be displayed.', 'fstpack' );
+				}
+			}
+		?></small></p>
 <?php
 
 		// Allow child themes/plugins to act here.
 		do_action( $this->fst_widget_idbase . '_widget_settings', $instance, $this );
 
 	} // End form()
-	
-	/**
-	 * Renders a tabs selection dropdown box
-	 */
-	private function render_tabs_dropdown($available_tabs, $selected_tabs, $position) {
-		echo "<p><select name='{$this->get_field_name( "tab_$position" )}' class='widefat' id='{$this->get_field_id( "tab_$position" )}'>";
-		echo '<option value="none">' . __( ' - None selected - ', 'fstpack' ) . '</option>';
-		foreach($available_tabs as $available_tab) {
-			echo '<option value="' . $available_tab . '"' . selected( $available_tab, $selected_tabs[$position], false ) . '>' . __( $available_tab, 'fstpack' ) . "</option>";
-		}
-		echo "</select></p>";
-	}
+
 	/**
 	 * enqueue_styles after bootstrap
 	 *
@@ -300,8 +270,8 @@ class FST_Tabs_Widget extends WP_Widget {
 	 * @return void
 	 */
 	function enqueue_styles () {
-		wp_register_style( $this->fst_widget_idbase, $this->assets_url . 'css/style.css', array( 'bootstrap' ), FST_PACK_VERSION );
-		wp_enqueue_style( $this->fst_widget_idbase );
+            wp_register_style( $this->fst_widget_idbase, $this->assets_url . 'css/style.css', array( 'bootstrap' ), FST_PACK_VERSION );
+            wp_enqueue_style( $this->fst_widget_idbase );
 	} // End enqueue_styles()
 
 	/**
@@ -312,8 +282,8 @@ class FST_Tabs_Widget extends WP_Widget {
 	 * @return void
 	 */
 	function enqueue_scripts () {
-		wp_register_script( $this->fst_widget_idbase, $this->assets_url . 'js/functions.js', array( 'bootstrap' ), FST_PACK_VERSION );
-		wp_enqueue_script( $this->fst_widget_idbase );
+            wp_register_script( $this->fst_widget_idbase, $this->assets_url . 'js/functions.js', array( 'bootstrap' ), FST_PACK_VERSION );
+            wp_enqueue_script( $this->fst_widget_idbase );
 	} // End enqueue_styles()
 
 	/**
