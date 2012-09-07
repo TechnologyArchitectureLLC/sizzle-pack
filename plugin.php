@@ -59,7 +59,7 @@ class ForsiteExtensionPackPlugin {
 	 * Initializes the plugin by setting localization, filters, and administration functions.
 	 */
 	function __construct() {
-            load_plugin_textdomain( 'plugin-name-locale', false, dirname( plugin_basename( __FILE__ ) ) . '/assets/languages' );
+            load_plugin_textdomain( 'fstpack', false, FST_PACK_DIR . '/assets/languages' );
             
             // Register admin styles and scripts
             add_action( 'admin_print_styles',    array( &$this, 'register_admin_styles' ) );
