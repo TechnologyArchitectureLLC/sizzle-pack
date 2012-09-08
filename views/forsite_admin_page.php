@@ -7,29 +7,15 @@
   $modules["widgets"][] = array("id"=> "FST_Tabs_Widget", "name" => "FST Tabs Widget", 
                                 "thumbnail" => FST_PACK_URL . 'modules/fst-tabs-widget/images/thumbnail.gif',
                                 "description" => "Allows grouping of other widgets into tabs",
-                                "tags" => "");
+                                "tags" => "popular");
   $modules["widgets"][] = array("id"=> "FST_Contact_Widget", "name" => "FST Contact Widget", 
                                 "thumbnail" => FST_PACK_URL . 'modules/fst-contact-widget/images/thumbnail.gif',
                                 "description" => "a Schema.org compliant contact widget",
-                                "tags" => "popular");
+                                "tags" => "");
   $modules["plugins"][] = array("id"=> "FST_Menu_Extensions", "name" => "FST Menu Extensions", 
                                 "thumbnail" => "http://placehold.it/260x180",
                                 "description" => "Add custom menu types including Nav header, Nav Divider and Nav Widget Area",
                                 "tags" => "popular");
-  $modules["plugins"][] = array("id"=> "FST_2_Plugin", "name" => "FST Plugin 2", 
-                                "thumbnail" => "http://placehold.it/260x180",
-                                "description" => "Lorem ipsum dolor sit amet, nunc venenatis mollis lobortis eu non.",
-                                "tags" => "");
-  $modules["plugins"][] = array("id"=> "FST_3_Plugin", "name" => "FST Plugin 3", 
-                                "thumbnail" => "http://placehold.it/260x180",
-                                "description" => "Lorem ipsum dolor sit amet, nunc venenatis mollis lobortis eu non.",
-                                "tags" => "");
-  $modules["plugins"][] = array("id"=> "FST_4_Plugin", "name" => "FST Plugin 4", 
-                                "thumbnail" => "http://placehold.it/260x180",
-                                "description" => "Lorem ipsum dolor sit amet, nunc venenatis mollis lobortis eu non.",
-                                "tags" => "");
-  
- 
 ?>
 <style>
     .thumbnail {

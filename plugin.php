@@ -126,8 +126,15 @@ class ForsiteExtensionPackPlugin {
             $defaults['widgets']['FST_Slideshow_Widget'] = array('enabled'=>false);
             $defaults['widgets']['FST_Contact_Widget'] = array('enabled'=>false);
             $defaults['widgets']['FST_Tabs_Widget'] = array('enabled'=>false);
-            $this->data = array_merge($defaults, get_option('fst_modules_enabled'));
-            update_option('fst_modules_enabled,', $this->data);
+
+            $defaults['plugins']['FST_Menu_Extensions'] = array('enabled'=>false);
+	    
+	    $this->data = $defaults;
+
+            $current_options = get_option('fst_modules_enabled');
+	    if (is_array($current_options)) { $this->data = array_merge($defaults, get_option('fst_modules_enabled')); }
+            
+	    update_option('fst_modules_enabled,', $this->data);
         }
 
         /**
