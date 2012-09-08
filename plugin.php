@@ -77,8 +77,7 @@ class ForsiteExtensionPackPlugin {
 	 * Registers and enqueues admin-specific styles.
 	 */
 	public function register_admin_styles() {
-            wp_enqueue_style( 'bootstrap-wpadmin', 
-                    plugins_url( FST_PACK_URL . 'vendor/bootstrap/css/bootstrap-wpadmin.min.css' );
+            wp_enqueue_style( 'bootstrap-wpadmin', FST_PACK_URL . 'vendor/bootstrap/css/bootstrap-wpadmin.min.css' );
 	} 
 
 	/**
