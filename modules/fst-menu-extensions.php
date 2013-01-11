@@ -11,7 +11,6 @@
  */
 
 define('FST_MENU_EXTENSIONS_DIR', FST_PACK_DIR . '/modules/fst-menu-extensions');
-require_once FST_MENU_EXTENSIONS_DIR . '/fst-walker-nav-menu.php';
 require_once FST_MENU_EXTENSIONS_DIR . '/hookable-walker-nav-menu-edit.php';
 
 /**
@@ -38,8 +37,6 @@ class FST_Menu_Extensions {
         add_filter( 'nav_menu_edit_massage_original_title', array( &$this, 'filter_menu_massage_original_title' ), 10, 2 );
         
         // Modify the display of the front-end menu
-        remove_action( 'genesis_after_header', 'genesis_do_nav' );
-        add_action( 'genesis_after_header',     array( &$this, 'genassist_genesis_do_nav' ) );
         add_filter( 'nav_menu_css_class',       array( &$this, 'filter_add_menu_extension_class' ), 10, 3 );
         add_filter( 'walker_nav_menu_start_el', array( &$this, 'menu_extension_renderer' ), 10 ,4 );
     }
@@ -317,57 +314,7 @@ class FST_Menu_Extensions {
     }
     
      
-    /**
-    * GenAssist: overrides primary Genesis menu generation to conform to
-    *            structure required for bootstrap menus
-    *
-    * Output can be filtered via 'genesis_do_nav'.
-    *
-    * @since 1.0.0
-    *
-    * @uses genesis_get_option() Get theme setting value
-    * @uses genesis_nav() Use old-style Genesis Pages or Categories menu
-    * @uses genesis_structural_wrap() Adds optional internal wrap divs
-    */
-    function genassist_genesis_do_nav() {
 
-        // Do nothing if menu not supported 
-        if ( ! genesis_nav_menu_supported( 'primary' ) )
-                return;
-
-        if ( genesis_get_option( 'nav' ) ) {
-                if ( has_nav_menu( 'primary' ) ) {
-                        $args = array(
-                                'theme_location' => 'primary',
-                                'container'      => false,
-                                'menu_class'     => 'menu menu-primary nav',
-                                'echo'           => 0,
-                                'walker'         => new FST_Walker_Nav_Menu()
-                        );
-
-                        $nav = wp_nav_menu( $args );
-        }
-
-        $genassist_nav_structure = <<<EOD
-        <div class="navbar">
-            <div class="navbar-inner">
-                <div class="wrap container">
-                    <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </a>
-                    <div class="nav-collapse">
-                        {$nav}
-                    </div>
-                </div>
-            </div>
-        </div>
-EOD;
-
-        echo apply_filters( 'genesis_do_nav', $genassist_nav_structure, $nav, $args );
-        }
-    }
 
 } // end of class
 // end of the world?
